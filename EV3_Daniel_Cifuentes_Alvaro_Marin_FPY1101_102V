@@ -1,0 +1,154 @@
+import csv
+import random as rd
+data_personas = []
+data_certificados = []
+valor_certificado = rd.randint(1000,1500)
+
+def validar_rut(rut):
+    # Validar que el RUT tenga el formato correcto
+    return len(rut) >= 9 and len(rut) <= 10 and rut[:-2].isdigit() and rut[-2] == '-' and rut[-1].isalnum()
+
+
+def grabar_persona():
+    """
+    Opción 1: Grabar.
+    Permite ingresar los datos de un persona.
+    """
+    try:
+        rut = input("Ingrese el RUT de la persona: (Ej: 123456789-0) ")
+        if not validar_rut(rut):
+            print("RUT inválido.")
+            return
+        nombre = input("Ingrese el Nombre: ")
+        if len(nombre) < 3:
+            print("El nombre debe tener al menos 3 caracteres.")
+            return
+        apellido_paterno = input("Ingrese el Apellido Paterno: ")
+        if len(apellido_paterno) < 3:
+            print("El apellido debe tener al menos 3 caracteres.")
+            return
+        edad = int(input("Ingrese la edad: "))
+        if edad < 18:
+            print("La edad debe ser mayor a 18 años.")
+            return
+        estado_civil = input("Ingrese el estado civil: (C = Casado, S = Soltero, V = Viudo) ").upper()
+        if estado_civil not in ['C','S','V'] :
+            print("El estado civil debe estar dentro de C,S,V.")
+            return
+        genero = input("Ingrese el genero de la persona: (F = Femenino, M = Masculino, O = Otro) ").upper()
+        if genero not in ['F','M','O'] :
+            print("El genero debe estar dentro de F,M,O.")
+            return
+        fecha_afiliacion = str(input("Ingrese la Fecha de Afiliación: (DD/MM/AAAA) "))
+        personas = {
+            'Rut': rut,
+            'Nombre': nombre,
+            'Apellido Paterno': apellido_paterno,
+            'Edad': edad,
+            'Estado Civil': estado_civil,
+            'Genero': genero,
+            'Fecha Afililacion': fecha_afiliacion
+        }
+        certificados = {
+            'Rut': rut,
+            'Nombre': nombre,
+            'Apellido Paterno': apellido_paterno,
+            'Edad': edad,
+            'Estado Civil': estado_civil,
+            'Genero': genero,
+            'Fecha Afililacion': fecha_afiliacion,
+            'Valor Certificado': valor_certificado
+        }
+        data_personas.append(personas)
+        data_certificados.append(certificados)
+        print("Persona agregada correctamente")
+    except ValueError:
+        print("Dato erróneo. Intente nuevamente.")
+
+def buscar_persona():
+    """
+    Opción 2: Buscar Persona.
+    Permite buscar un persona por su rut
+    """
+    rut = input("Ingrese el Rut de la persona a buscar: ")
+    if not validar_rut(rut):
+            print("RUT inválido.")
+            return
+    for personas in data_personas:
+        if personas['Rut'].lower() == rut.lower():
+            print("\nLos datos de la persona son:")
+            print("Rut:", personas['Rut'])
+            print("Nombre:", personas['Nombre'])
+            print("Apellido Paterno:", personas['Apellido Paterno'])
+            print("Edad:", personas['Edad'])
+            print("Estado Civil:", personas['Estado Civil'])
+            print("Genero:", personas['Genero'])
+            print("Fecha Afililacion:", personas['Fecha Afililacion'])
+            return
+    print("La persona no fue encontrada.")
+
+    
+def crear_certificado ():
+    with open('certificado.csv', 'w', newline='') as archivo_csv:
+            escritor_csv = csv.writer(archivo_csv)
+            for certificados in data_certificados:
+                escritor_csv.writerow([certificados['Rut'],
+                                        certificados['Nombre'], 
+                                        certificados['Apellido Paterno'],
+                                        certificados['Edad'], 
+                                        certificados['Estado Civil'],
+                                        certificados['Genero'], 
+                                        certificados['Fecha Afililacion'],
+                                          certificados['Valor Certificado']
+                                          ])
+
+
+def mostrar_certificados():
+    """
+    Opción 3: Mostrar personas con certificados 
+    """
+    if not data_certificados:
+        print("No hay Personas registradas.")
+        return
+    print("Personas :")
+    for certificados in data_certificados:
+        print(f"Certificado Afiliación de {certificados['Nombre']}")
+        print("Rut:", certificados['Rut'])
+        print("Nombre:", certificados['Nombre'])
+        print("Apellido Paterno:", certificados['Apellido Paterno'])
+        print("Edad:", certificados['Edad'])
+        print("Estado Civil:", certificados['Estado Civil'])
+        print("Genero:", certificados['Genero'])
+        print("Fecha Afililacion:", certificados['Fecha Afililacion'])
+        print("Valor Certificado:", certificados['Valor Certificado'])
+        print("-" * 20)
+    crear_certificado ()
+            
+
+
+def menu():
+    while True:
+        try:
+            print("\n* * *  M E N Ú  * * *")
+            print("\n* * * Vida  y Salud  * * *")
+            print("1. Registrar Personas")
+            print("2. Buscar Persona")
+            print("3. Mostrar Certificados")
+            print("4. Salir")
+            op = int(input("Ingrese una opción: "))
+            if op == 1:
+                grabar_persona()
+            elif op == 2:
+                buscar_persona()
+            elif op == 3:
+                mostrar_certificados()
+            elif op == 4:
+                print("Saliendo del programa. ¡Hasta luego!")
+                print("Integrantes: Daniel Cifuentes, Álvaro Marín")
+                print("Version del programa: 1.0")
+                break
+            else:
+                print("Opción fuera de rango. Intente nuevamente.")
+        except ValueError:
+            print("Dato erróneo. Intente nuevamente.")
+menu()
